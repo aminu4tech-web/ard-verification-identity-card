@@ -1,0 +1,336 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#081426">
+  <title>ARD Verification Identity Card</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body{background:#081426;color:#f8fafc;font-family:Arial,sans-serif}
+    .panel{background:#10213a;border:1px solid #2b405c;border-radius:16px}
+    .gold{color:#f5c451}
+    .btn{background:#d4a72c;color:#081426;font-weight:bold;padding:12px 16px;border-radius:9px}
+    .field{width:100%;padding:12px;margin-top:6px;background:#081426;border:1px solid #344965;border-radius:8px;color:white}
+    .hidden{display:none!important}
+  </style>
+</head>
+<body>
+<header class="p-4 border-b border-slate-700 flex justify-between items-center">
+  <div>
+    <h1 class="text-xl font-bold gold">ARD VERIFICATION</h1>
+    <p class="text-xs text-slate-400">Identity & Business Services</p>
+  </div>
+  <button id="logoutBtn" class="hidden border border-slate-500 px-3 py-2 rounded-lg">Logout</button>
+</header>
+
+<main class="max-w-3xl mx-auto p-4 space-y-5">
+  <section id="home" class="panel p-6">
+    <p class="gold font-bold text-sm">WELCOME TO ARD</p>
+    <h2 class="text-3xl font-bold mt-3">Verification Services Platform</h2>
+    <p class="text-slate-300 mt-3">
+      Manage service requests and check their progress from one dashboard.
+    </p>
+    <div class="grid sm:grid-cols-2 gap-3 mt-6">
+      <div class="border border-slate-700 rounded-xl p-4">
+        <h3 class="gold font-bold">NIN Services</h3>
+        <p class="text-sm text-slate-300 mt-2">Validation, verification and official correction guidance.</p>
+      </div>
+      <div class="border border-slate-700 rounded-xl p-4">
+        <h3 class="gold font-bold">BVN Services</h3>
+        <p class="text-sm text-slate-300 mt-2">Verification and bank-approved correction guidance.</p>
+      </div>
+      <div class="border border-slate-700 rounded-xl p-4">
+        <h3 class="gold font-bold">CAC Services</h3>
+        <p class="text-sm text-slate-300 mt-2">Business registration lookup and correction guidance.</p>
+      </div>
+      <div class="border border-slate-700 rounded-xl p-4">
+        <h3 class="gold font-bold">TIN & SMEDAN</h3>
+        <p class="text-sm text-slate-300 mt-2">Business and tax verification service requests.</p>
+      </div>
+    </div>
+    <p class="text-xs text-amber-300 mt-5">
+      API verification is not connected yet. This website is a private ARD service,
+      not a government website or an official identity authority.
+    </p>
+    <div class="flex flex-wrap gap-3 mt-6">
+      <button id="openRegister" class="btn">Create Account</button>
+      <button id="openLogin" class="border border-slate-500 px-4 py-3 rounded-lg">Login</button>
+    </div>
+  </section>
+
+  <section id="registerPanel" class="panel p-5 hidden">
+    <h2 class="text-2xl font-bold gold">Create Account</h2>
+    <form id="registerForm" class="space-y-4 mt-4">
+      <div>
+        <label for="fullName">Full name</label>
+        <input id="fullName" class="field" maxlength="100" required autocomplete="name">
+      </div>
+      <div>
+        <label for="registerEmail">Email address</label>
+        <input id="registerEmail" class="field" type="email" required autocomplete="email">
+      </div>
+      <div>
+        <label for="registerPassword">Password (minimum 6 characters)</label>
+        <input id="registerPassword" class="field" type="password" minlength="6" required autocomplete="new-password">
+      </div>
+      <button class="btn w-full" type="submit">Register</button>
+    </form>
+    <button id="registerLogin" class="gold underline text-sm mt-4">Already have an account? Login</button>
+  </section>
+
+  <section id="loginPanel" class="panel p-5 hidden">
+    <h2 class="text-2xl font-bold gold">Login</h2>
+    <form id="loginForm" class="space-y-4 mt-4">
+      <div>
+        <label for="loginEmail">Email address</label>
+        <input id="loginEmail" class="field" type="email" required autocomplete="email">
+      </div>
+      <div>
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" class="field" type="password" required autocomplete="current-password">
+      </div>
+      <button class="btn w-full" type="submit">Login</button>
+    </form>
+    <button id="forgotPassword" class="gold underline text-sm mt-4">Forgot password?</button>
+    <br>
+    <button id="loginRegister" class="gold underline text-sm mt-4">Create an account</button>
+  </section>
+
+  <section id="dashboard" class="panel p-5 hidden">
+    <p class="gold font-bold">USER DASHBOARD</p>
+    <h2 class="text-2xl font-bold mt-2">Welcome, <span id="memberName">Member</span></h2>
+    <p id="memberEmail" class="text-sm text-slate-300 mt-2"></p>
+    <div class="mt-5 rounded-xl bg-slate-950 p-4">
+      <h3 class="font-bold">Your service requests</h3>
+      <p class="text-sm text-slate-400 mt-2">Submit a request without entering your NIN, BVN, password, PIN or OTP.</p>
+      <form id="requestForm" class="space-y-4 mt-4">
+        <div>
+          <label for="serviceType">Choose a service</label>
+          <select id="serviceType" class="field" required>
+            <option value="">Select service</option>
+            <option>NIN validation / verification guidance</option>
+            <option>NIN correction guidance</option>
+            <option>BVN verification / correction guidance</option>
+            <option>CAC verification / correction guidance</option>
+            <option>TIN verification / correction guidance</option>
+            <option>SMEDAN verification / correction guidance</option>
+          </select>
+        </div>
+        <div>
+          <label for="requestNote">Describe what help you need (no identity numbers)</label>
+          <textarea id="requestNote" class="field" rows="3" maxlength="500" placeholder="Briefly describe the issue"></textarea>
+        </div>
+        <button class="btn w-full" type="submit">Submit Request</button>
+      </form>
+    </div>
+    <div class="mt-5">
+      <h3 class="font-bold">Request history</h3>
+      <div id="requestList" class="space-y-3 mt-3">
+        <p class="text-sm text-slate-400">Your requests will appear here.</p>
+      </div>
+    </div>
+    <div id="adminPanel" class="hidden mt-6 border border-amber-400 rounded-xl p-4">
+      <h3 class="gold text-xl font-bold">Admin Dashboard</h3>
+      <p class="text-sm mt-2">Admin access detected. Request management will be enabled after secure admin rules are configured.</p>
+    </div>
+  </section>
+
+  <section class="panel p-5">
+    <h2 class="gold font-bold text-lg">Verification Status</h2>
+    <p class="text-sm text-slate-300 mt-2">
+      NIN, BVN, CAC, TIN and SMEDAN live verification APIs have not been connected.
+      No identity or business record can be marked as officially verified by this demo.
+    </p>
+  </section>
+
+  <p id="message" class="text-sm text-center" role="status" aria-live="polite"></p>
+</main>
+
+<footer class="text-center text-xs text-slate-500 p-6">
+  ARD Verification Identity Card · Private service platform · Not a government agency
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  sendPasswordResetEmail, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, setDoc, collection, addDoc,
+  query, where, getDocs, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDBhfYso4a_pfqxABrwIlboaTFRV0rqd10",
+  authDomain: "ard-verification-identity-card.firebaseapp.com",
+  projectId: "ard-verification-identity-card",
+  storageBucket: "ard-verification-identity-card.firebasestorage.app",
+  messagingSenderId: "32831629072",
+  appId: "1:32831629072:web:afff5687775c9ba2652795",
+  measurementId: "G-6S5XJHYM4S"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+const panels = ["home","registerPanel","loginPanel","dashboard"];
+function showPanel(id) {
+  panels.forEach(p => $(p).classList.toggle("hidden", p !== id));
+  $("message").textContent = "";
+}
+function message(text, error = false) {
+  $("message").textContent = text;
+  $("message").className = "text-sm text-center " + (error ? "text-red-300" : "text-emerald-300");
+}
+function friendlyError(error) {
+  const messages = {
+    "auth/email-already-in-use": "This email is already registered. Please log in.",
+    "auth/invalid-email": "Please enter a valid email address.",
+    "auth/weak-password": "Please choose a stronger password of at least 6 characters.",
+    "auth/invalid-credential": "Email or password is incorrect.",
+    "auth/too-many-requests": "Too many attempts. Please wait and try again.",
+    "permission-denied": "Firebase security rules need to be configured before this action can work."
+  };
+  return messages[error.code] || error.message || "Something went wrong. Please try again.";
+}
+
+$("openRegister").onclick = () => showPanel("registerPanel");
+$("openLogin").onclick = () => showPanel("loginPanel");
+$("registerLogin").onclick = () => showPanel("loginPanel");
+$("loginRegister").onclick = () => showPanel("registerPanel");
+
+$("registerForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  try {
+    const name = $("fullName").value.trim();
+    const email = $("registerEmail").value.trim();
+    const credential = await createUserWithEmailAndPassword(auth, email, $("registerPassword").value);
+    await setDoc(doc(db, "users", credential.user.uid), {
+      name,
+      email,
+      role: "user",
+      createdAt: serverTimestamp()
+    });
+    message("Account created successfully.");
+  } catch (error) {
+    message(friendlyError(error), true);
+  }
+});
+
+$("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  try {
+    await signInWithEmailAndPassword(auth, $("loginEmail").value.trim(), $("loginPassword").value);
+    message("Login successful.");
+  } catch (error) {
+    message(friendlyError(error), true);
+  }
+});
+
+$("forgotPassword").onclick = async () => {
+  const email = $("loginEmail").value.trim();
+  if (!email) {
+    message("Enter your email address first.", true);
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    message("If the account exists, a password reset email has been sent.");
+  } catch (error) {
+    message(friendlyError(error), true);
+  }
+};
+
+$("logoutBtn").onclick = async () => {
+  try {
+    await signOut(auth);
+    message("You have logged out.");
+  } catch (error) {
+    message(friendlyError(error), true);
+  }
+};
+
+$("requestForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const user = auth.currentUser;
+  if (!user) return message("Please log in first.", true);
+
+  try {
+    await addDoc(collection(db, "requests"), {
+      uid: user.uid,
+      service: $("serviceType").value,
+      note: $("requestNote").value.trim(),
+      status: "Pending",
+      createdAt: serverTimestamp()
+    });
+    $("requestForm").reset();
+    message("Request submitted. It is pending review, not verified.");
+    await loadRequests(user.uid);
+  } catch (error) {
+    message(friendlyError(error), true);
+  }
+});
+
+async function loadRequests(uid) {
+  const list = $("requestList");
+  list.replaceChildren();
+  try {
+    const q = query(collection(db, "requests"), where("uid", "==", uid));
+    const result = await getDocs(q);
+    if (result.empty) {
+      list.textContent = "No requests yet.";
+      return;
+    }
+    result.forEach(item => {
+      const data = item.data();
+      const card = document.createElement("div");
+      card.className = "border border-slate-700 rounded-lg p-3";
+      const title = document.createElement("p");
+      title.className = "font-bold";
+      title.textContent = data.service || "Service request";
+      const status = document.createElement("p");
+      status.className = "text-sm gold mt-1";
+      status.textContent = "Status: " + (data.status || "Pending");
+      const note = document.createElement("p");
+      note.className = "text-sm text-slate-400 mt-1";
+      note.textContent = data.note || "No additional details.";
+      card.append(title, status, note);
+      list.append(card);
+    });
+  } catch (error) {
+    list.textContent = "Request history will appear after Firestore rules are configured.";
+  }
+}
+
+onAuthStateChanged(auth, async user => {
+  $("logoutBtn").classList.toggle("hidden", !user);
+  if (!user) {
+    showPanel("home");
+    return;
+  }
+  try {
+    const profile = await getDoc(doc(db, "users", user.uid));
+    if (!profile.exists()) {
+      message("Your account profile is not ready. Contact the administrator.", true);
+      showPanel("dashboard");
+      return;
+    }
+    const data = profile.data();
+    $("memberName").textContent = data.name || "Member";
+    $("memberEmail").textContent = user.email || "";
+    $("adminPanel").classList.toggle("hidden", data.role !== "admin");
+    showPanel("dashboard");
+    await loadRequests(user.uid);
+  } catch (error) {
+    showPanel("dashboard");
+    message("Account loaded, but database access needs secure Firebase rules.", true);
+  }
+});
+</script>
+</body>
+</html>
